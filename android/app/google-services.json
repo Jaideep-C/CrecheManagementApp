@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "883282637895",
+    "firebase_url": "https://fiver-church.firebaseio.com",
+    "project_id": "fiver-church",
+    "storage_bucket": "fiver-church.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:883282637895:android:55f169cd873cc9e8b2ed62",
+        "android_client_info": {
+          "package_name": "com.kids.church"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "883282637895-uq12bopl2eko480f68qbrkqnrh6eutf7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCfz0PtPJZGnNesSUVCbDvocLlgnl-4BBA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "883282637895-uq12bopl2eko480f68qbrkqnrh6eutf7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
