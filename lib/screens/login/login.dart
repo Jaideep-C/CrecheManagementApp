@@ -17,7 +17,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey=GlobalKey<FormState>();
 
   final AuthService _auth=AuthService();
-  bool loading=false;  
+  bool loading=false,_forgot=false;  
   String _email='';
   String _error='';
   String _password='';
@@ -111,7 +111,7 @@ class _LoginScreenState extends State<LoginScreen> {
       alignment: Alignment.centerRight,
       child: FlatButton(
         onPressed: () => print('Forgot Password Button Pressed'),
-        padding: EdgeInsets.only(right: 0.0),
+        padding: EdgeInsets.only(right: 0.4),
         child: Text(
           'Forgot Password?',
           style: kLabelStyle,
@@ -138,6 +138,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 setState(() {
                   String s=e.code;
                   _error=s;
+                  _forgot=true;
                   loading=false;
                   // switch( s){
                   //   case "ERROR_USER_NOT_FOUND":{
@@ -215,10 +216,11 @@ class _LoginScreenState extends State<LoginScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                        'Welcome to\t\t\t\n\t\t\t\tWest Church',
+                        // 'Welcome to\t\t\t\n\t\tWestPoint Church',
+                        'WestPoint\t\t\n\t\t\tCity Church',
                         style: TextStyle(
                           color: Colors.white,
-                          fontFamily: 'OpenSans',
+                          fontFamily: 'Bellota',
                           fontSize: 30.0,
                           fontWeight: FontWeight.bold,
                         ),
@@ -234,7 +236,10 @@ class _LoginScreenState extends State<LoginScreen> {
                           ],
                         ),
                       ),
-                      _buildForgotPasswordBtn(),
+                      Visibility(
+                        visible: _forgot,
+                        child: _buildForgotPasswordBtn()
+                        ),
                       Text(
                         _error,
                         style:TextStyle(color: Colors.redAccent,fontWeight: FontWeight.bold,fontFamily: 'OpenSans',fontSize: 15),
