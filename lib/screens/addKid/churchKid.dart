@@ -340,10 +340,6 @@ class _AddChurchKidState extends State<AddChurchKid> {
               _formKey.currentState.save();
               try{
                 _loading=true;
-                int i=1000000000;
-                while(i-->0){
-
-                }
                 doIt();
                 Navigator.pop(context);
                 print("Done");

@@ -2,7 +2,6 @@ import 'package:bottom_navy_bar/bottom_navy_bar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:five/screens/addKid/churchKid.dart';
 import 'package:five/service/auth.dart';
-import 'package:five/service/database.dart';
 import 'package:flutter/material.dart';
 class Home extends StatefulWidget {
 
@@ -14,6 +13,14 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   final AuthService _auth = AuthService();
   
+    // DocumentSnapshot _currentDocument;
+
+  // _updateData() async {
+  //   await Firestore.instance
+  //       .collection("kids-Church")
+  //       .document(_currentDocument.documentID)
+  //       .updateData({'isLog': true});
+  // }
 
   int _currentIndex=0;
   PageController _pageController;
@@ -32,13 +39,38 @@ class _HomeState extends State<Home> {
 
     return Scaffold(
       backgroundColor: Colors.blue[50],
-      body: StreamBuilder(
+      body: StreamBuilder<QuerySnapshot>(
         stream:Firestore.instance.collection("kids-Church").snapshots(),
         builder: (context,snapshot){
           if(snapshot.data == null) return Center(child: CircularProgressIndicator());
-          return ListView(
-            children:activeIt(snapshot),
-            );
+          // return ListView(
+          //   children:makeIt(snapshot),
+          //   );
+          return Column(
+                    children: snapshot.data.documents.map((doc) {
+                      return Visibility(
+                        visible: doc.data['isLog']??false,
+                        child: Column(
+                          children: <Widget>[
+                            ListTile(
+                              title: Text(doc.data['fullName'] ?? 'nil'),
+                              trailing: RaisedButton(
+                                child: Text("Sign-Out"),
+                                color: Colors.orange,
+                                onPressed: () async {
+                                  await Firestore.instance
+                                  .collection("kids-Church")
+                                  .document(doc.documentID)
+                                  .updateData({'isLog': false});
+                                },
+                              ),
+                            ),
+                            Divider(thickness: 1,color: Colors.black,),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                  );
         },
       ),
     );
@@ -59,13 +91,38 @@ class _HomeState extends State<Home> {
           );
         },
         ),
-      body: StreamBuilder(
+      body: StreamBuilder<QuerySnapshot>(
         stream:Firestore.instance.collection("kids-Church").snapshots(),
         builder: (context,snapshot){
           if(snapshot.data == null) return Center(child: CircularProgressIndicator());
-          return ListView(
-            children:makeIt(snapshot),
-            );
+          // return ListView(
+          //   children:makeIt(snapshot),
+          //   );
+          return Column(
+                    children: snapshot.data.documents.map((doc) {
+                      return Visibility(
+                        visible: doc.data['fullName']!=null,
+                        child: Column(
+                          children: <Widget>[
+                            ListTile(
+                              title: Text(doc.data['fullName'] ?? 'nil'),
+                              trailing: RaisedButton(
+                                child: Text("Sign-In"),
+                                color: Colors.amber,
+                                onPressed: () async {
+                                  await Firestore.instance
+                                  .collection("kids-Church")
+                                  .document(doc.documentID)
+                                  .updateData({'isLog': true});
+                                },
+                              ),
+                            ),
+                            Divider(thickness: 1,color: Colors.black,),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                  );
         },
       ),
     );
