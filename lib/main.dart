@@ -1,11 +1,12 @@
-import 'package:five/service/auth.dart';
+import 'package:five/modules/user.dart';
 import 'package:five/screens/wrapper.dart';
+import 'package:five/service/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'modules/user.dart'; 
+
 void main() {
-  runApp(MyApp());
+  runApp(MaterialApp(home: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -19,5 +20,15 @@ class MyApp extends StatelessWidget {
         home: Decide(),
       ),
     );
+    // return MultiProvider(
+    //   providers: [
+    //     ChangeNotifierProvider(
+    //       create: (context) => ChurchKidNotifier(),
+    //     ),
+    //   ],
+    //   child: StreamProvider<User>.value(
+    //     value: AuthService().user,
+    //     child: Decide()),
+    //   );
   }
 }

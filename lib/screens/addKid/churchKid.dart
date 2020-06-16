@@ -1,8 +1,6 @@
-// import 'package:flutter/gestures.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:five/utilities/loading.dart';
 import 'package:flutter/material.dart';
-// import 'package:flutter/services.dart';
-// import 'package:gender_selection/gender_selection.dart';
 
 class AddChurchKid extends StatefulWidget {
 
@@ -16,10 +14,12 @@ class _AddChurchKidState extends State<AddChurchKid> {
   String _firstName,_lastName;
   DateTime _bornDay;
   String _gName;
-  var _sex="Birthday";
+  var _sex="Gender";
   String _gPhone;
-  String _allergies;
-  var gender=["Birthday","Male","Female","Other"];
+  bool _loading=false;
+  String _allergies,_error="nope";
+  var gender=["Gender","Male","Female","Other"];
+
   Widget _newProfile(){
     return Form(
       key: _formKey,
@@ -329,16 +329,43 @@ class _AddChurchKidState extends State<AddChurchKid> {
     Widget _addBtn() {
     return FloatingActionButton.extended(
       onPressed:(){
-        if(_formKey.currentState.validate()){
-          _formKey.currentState.save();
-          doIt();
-        }
+        setState(() {
+          if(_sex=="Gender"){
+            _error="Gender Shouldn't be empty";
+          }else if(_bornDay==null){
+            _error="Birthday Shouldn't be empty";
+          }else{
+            _error="nope";
+            if(_formKey.currentState.validate()){
+              _formKey.currentState.save();
+              try{
+                _loading=true;
+                int i=1000000000;
+                while(i-->0){
+
+                }
+                doIt();
+                Navigator.pop(context);
+                print("Done");
+              }catch(e){
+                _loading=false;
+                print(e.code);
+                _error=e.code;
+              }
+            }
+          }
+        });
       } , 
       heroTag: "addButton",
       backgroundColor: Colors.amber,
       label: Padding(
         padding: const EdgeInsets.fromLTRB(100, 5, 100, 5),//symmetric(vertical:0,horizontal:100),
-        child: Text("ADD ;)"),
+        child: Text(
+          "ADD ;)",
+          style: TextStyle(
+            fontFamily:"OpenSans",
+          ),
+          ),
       ),
       
       );
@@ -348,7 +375,14 @@ class _AddChurchKidState extends State<AddChurchKid> {
     .setData(
       {
         "firstName":_firstName,
-        "lastName":_lastName
+        "lastName":_lastName,
+        "gName":_gName,
+        "gPhone":_gPhone, 
+        "sex":(_sex=="gender")?("Did not provide"):(_sex),
+        "allergies":_allergies,
+        "bornDay":_bornDay,
+        "isLog":false,
+        "fullName":_firstName+" "+_lastName,
       }
     );
   }
@@ -357,7 +391,7 @@ class _AddChurchKidState extends State<AddChurchKid> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return (_loading)?(Loading()):Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xFF398AE5),
       ),
@@ -411,6 +445,18 @@ class _AddChurchKidState extends State<AddChurchKid> {
                       SizedBox(
                         width: 300,
                         height: 50,
+                        child: Visibility(
+                          visible: _error!="nope",
+                          child: Center(
+                            child: Text(
+                              _error,
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontFamily:"OpenSans",
+                                color: Colors.red
+                              ),
+                            ),
+                          )),
                       ),
                       _addBtn(),
                     ],

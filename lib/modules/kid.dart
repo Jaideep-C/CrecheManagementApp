@@ -1,11 +1,16 @@
+
 class ChurchKid {
 
   String firstName,lastName;
-  int age;
+  String fullName;
+  DateTime bornDay;
   String gName;
   String gPhone;
-  List allergies=new List(20);
-  
+  String allergies;
+  String sex;
+  bool isLog;
+
+  ChurchKid({this.fullName,this.firstName,this.lastName,this.gName,this.gPhone,this.sex,this.bornDay,this.isLog,this.allergies});
 }
 
 class CrecheKid {
