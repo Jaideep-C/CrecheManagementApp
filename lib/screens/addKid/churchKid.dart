@@ -299,31 +299,6 @@ class _AddChurchKidState extends State<AddChurchKid> {
     );   
   }
 
-  //Back btn
-  Widget  _backButton() {
-    return Visibility(
-      visible: !!false,
-          child: RaisedButton(
-        padding: EdgeInsets.symmetric(horizontal: 10),
-        onPressed: () { 
-          setState(() {
-            Navigator.pop(context);
-          });
-           },
-        child: Row(
-          children: <Widget>[
-            Container(
-              padding: EdgeInsets.only(left: 0, top: 10, bottom: 10),
-              child: Icon(Icons.keyboard_arrow_left, color: Colors.black),
-            ),
-            Text('Back',
-                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500))
-          ],
-        ),
-      ),
-    );
-  }
-
 
   // Submit button:
     Widget _addBtn() {
@@ -410,7 +385,6 @@ class _AddChurchKidState extends State<AddChurchKid> {
                 ),
               ),
             ),
-            Positioned(top: 30, left: 0, child: _backButton()),
             Container(
               height: double.infinity,
               width: MediaQuery.of(context).size.width,

@@ -13,9 +13,13 @@ class Decide extends StatelessWidget {
     
     // return either the Home or Authenticate widget
     if (user == null){
-      return MaterialApp(home: Authenticate());
+      return MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: Authenticate());
     } else {
-      return MaterialApp(home: Home());
+      return MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: Home());
     }
     
   }

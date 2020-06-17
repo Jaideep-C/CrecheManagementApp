@@ -39,39 +39,42 @@ class _HomeState extends State<Home> {
 
     return Scaffold(
       backgroundColor: Colors.blue[50],
-      body: StreamBuilder<QuerySnapshot>(
-        stream:Firestore.instance.collection("kids-Church").snapshots(),
-        builder: (context,snapshot){
-          if(snapshot.data == null) return Center(child: CircularProgressIndicator());
-          // return ListView(
-          //   children:makeIt(snapshot),
-          //   );
-          return Column(
-                    children: snapshot.data.documents.map((doc) {
-                      return Visibility(
-                        visible: doc.data['isLog']??false,
-                        child: Column(
-                          children: <Widget>[
-                            ListTile(
-                              title: Text(doc.data['fullName'] ?? 'nil'),
-                              trailing: RaisedButton(
-                                child: Text("Sign-Out"),
-                                color: Colors.orange,
-                                onPressed: () async {
-                                  await Firestore.instance
-                                  .collection("kids-Church")
-                                  .document(doc.documentID)
-                                  .updateData({'isLog': false});
-                                },
+      body: SingleChildScrollView(
+        physics: AlwaysScrollableScrollPhysics(),
+        child: StreamBuilder<QuerySnapshot>(
+          stream:Firestore.instance.collection("kids-Church").snapshots(),
+          builder: (context,snapshot){
+            if(snapshot.data == null) return Center(child: CircularProgressIndicator());
+            // return ListView(
+            //   children:makeIt(snapshot),
+            //   );
+            return Column(
+                      children: snapshot.data.documents.map((doc) {
+                        return Visibility(
+                          visible: doc.data['isLog']??false,
+                          child: Column(
+                            children: <Widget>[
+                              ListTile(
+                                title: Text(doc.data['fullName'] ?? 'nil'),
+                                trailing: RaisedButton(
+                                  child: Text("Sign-Out"),
+                                  color: Colors.orange,
+                                  onPressed: () async {
+                                    await Firestore.instance
+                                    .collection("kids-Church")
+                                    .document(doc.documentID)
+                                    .updateData({'isLog': false});
+                                  },
+                                ),
                               ),
-                            ),
-                            Divider(thickness: 1,color: Colors.black,),
-                          ],
-                        ),
-                      );
-                    }).toList(),
-                  );
-        },
+                              Divider(thickness: 1,color: Colors.black,),
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                    );
+          },
+        ),
       ),
     );
   }
@@ -91,42 +94,61 @@ class _HomeState extends State<Home> {
           );
         },
         ),
-      body: StreamBuilder<QuerySnapshot>(
-        stream:Firestore.instance.collection("kids-Church").snapshots(),
-        builder: (context,snapshot){
-          if(snapshot.data == null) return Center(child: CircularProgressIndicator());
-          // return ListView(
-          //   children:makeIt(snapshot),
-          //   );
-          return Column(
-                    children: snapshot.data.documents.map((doc) {
-                      return Visibility(
-                        visible: doc.data['fullName']!=null,
-                        child: Column(
-                          children: <Widget>[
-                            ListTile(
-                              title: Text(doc.data['fullName'] ?? 'nil'),
-                              trailing: RaisedButton(
-                                child: Text("Sign-In"),
-                                color: Colors.amber,
-                                onPressed: () async {
-                                  await Firestore.instance
-                                  .collection("kids-Church")
-                                  .document(doc.documentID)
-                                  .updateData({'isLog': true});
-                                },
+      body: SingleChildScrollView(
+        physics: AlwaysScrollableScrollPhysics(),
+        child: StreamBuilder<QuerySnapshot>(
+          stream:Firestore.instance.collection("kids-Church").snapshots(),
+          builder: (context,snapshot){
+            if(snapshot.data == null) return Center(child: CircularProgressIndicator());
+            // return ListView(
+            //   children:makeIt(snapshot),
+            //   );
+            return Column(
+                      children: snapshot.data.documents.map((doc) {
+                        return Visibility(
+                          visible: doc.data['fullName']!=null,
+                          child: Column(
+                            children: <Widget>[
+                              ListTile(
+                                title: Text(doc.data['fullName'] ?? 'nil'),
+                                trailing: RaisedButton(
+                                  child: (doc.data['isLog']==false)?Text("Sign-In"):Text('Active'),
+                                  color: (doc.data['isLog']==false)?Colors.amber:Colors.deepOrange,
+                                  onPressed: () async {
+                                    if(doc.data['isLog']==false){
+                                      await Firestore.instance
+                                    .collection("kids-Church")
+                                    .document(doc.documentID)
+                                    .updateData({'isLog': true});
+                                    }
+                                  },
+                                ),
                               ),
-                            ),
-                            Divider(thickness: 1,color: Colors.black,),
-                          ],
-                        ),
-                      );
-                    }).toList(),
-                  );
-        },
+                              Divider(thickness: 1,color: Colors.black,),
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                    );
+          },
+        ),
       ),
     );
   }
+  
+  Widget last(){
+
+    return Container(
+      child: Center(
+        child: Text("Admin",
+        style: TextStyle(
+          fontSize: 25,
+          fontFamily: "OpenSans"
+          ),
+      )),
+    );
+  }
+  
   @override
   Widget build(BuildContext context) {
 
@@ -134,7 +156,7 @@ class _HomeState extends State<Home> {
         child: Scaffold(        
           backgroundColor: Colors.blue[50],
           appBar: AppBar(
-            title: Text('Home',
+            title: Text('Administration',
             style: TextStyle(
                 color: Colors.white,
                 fontFamily: 'Bellota',
@@ -160,7 +182,6 @@ class _HomeState extends State<Home> {
             },
             children: <Widget>[
               Container(
-                color: Colors.blue[50],
                 child: first(),
                 ),
               
@@ -168,19 +189,7 @@ class _HomeState extends State<Home> {
                 child: middle(),
               ),
               
-              // Container(
-              //   color: Colors.blue[50],
-              //   child: StreamProvider<QuerySnapshot>.value(
-              //     value: Firestore.instance.collection("kids-Church").snapshots(),//DataBaseService().kids,
-              //     child: middle()
-              //     ),
-              // ),
-
-
-
-
-
-              Container(color: Colors.blue[50],),
+              Container(child: last()),
             ],
           ),
         ),
@@ -196,11 +205,11 @@ class _HomeState extends State<Home> {
               icon: (_currentIndex!=0)?Icon(Icons.people_outline):Icon(Icons.people)
             ),
             BottomNavyBarItem(
-              title: Text('Home'),
+              title: Text('User\'s'),
               icon: Icon(Icons.home)
             ),
             BottomNavyBarItem(
-              title: Text('Profile'),
+              title: Text('Admin'),
               icon: (_currentIndex!=2)?Icon(Icons.person_outline):Icon(Icons.person)
             ),
           ],
