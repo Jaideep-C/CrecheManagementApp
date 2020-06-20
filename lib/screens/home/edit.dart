@@ -1,26 +1,31 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:five/modules/kid.dart';
 import 'package:five/utilities/loading.dart';
 import 'package:flutter/material.dart';
 
-class AddChurchKid extends StatefulWidget {
-
-  AddChurchKid({Key key}) : super(key:key);
+class EditThat extends StatefulWidget {
+  final ChurchKid kid;
+  final String docId;
+  const EditThat({this.kid,this.docId});
   @override
-  _AddChurchKidState createState() => _AddChurchKidState();
+  _EditThatState createState() => _EditThatState();
 }
 
-class _AddChurchKidState extends State<AddChurchKid> {
+class _EditThatState extends State<EditThat> {
+  
   final GlobalKey<FormState> _formKey=GlobalKey<FormState>();
   String _firstName,_lastName;
   DateTime _bornDay;
   String _gName;
-  var _sex="Gender";
+  String _sex;
   String _gPhone;
   bool _loading=false;
   String _allergies,_error="nope";
-  var gender=["Gender","Male","Female"];
+  var gender=["Male","Female"];
 
   Widget _newProfile(){
+    // _sex=widget.kid.sex??null;
+    // _bornDay=widget.kid.bornDay.toDate();
     return Form(
       key: _formKey,
         child: Column(
@@ -34,6 +39,7 @@ class _AddChurchKidState extends State<AddChurchKid> {
             child: Container(
               width: MediaQuery.of(context).size.width,
               child: TextFormField(
+                initialValue: widget.kid.firstName,
                 onChanged: (val){
                   setState(() {
                     _firstName=val;
@@ -80,6 +86,7 @@ class _AddChurchKidState extends State<AddChurchKid> {
             child: Container(
               width: MediaQuery.of(context).size.width,
               child: TextFormField(
+                initialValue: widget.kid.lastName,
                 validator: (String val){
                   if(val.isEmpty){
                     return "Last Name shouldn't be empty";
@@ -123,6 +130,7 @@ class _AddChurchKidState extends State<AddChurchKid> {
             child: Container(
               width: MediaQuery.of(context).size.width,
               child: TextFormField(
+                initialValue: widget.kid.gName,
                 validator: (String value) {
                   if(value.isEmpty){
                     return "Guardian's Name shouldn't be empty";
@@ -161,6 +169,7 @@ class _AddChurchKidState extends State<AddChurchKid> {
             child: Container(
               width: MediaQuery.of(context).size.width,
               child: TextFormField(
+                initialValue: widget.kid.gPhone,
                 validator: (String val) {
                   if(val.isEmpty) 
                     return "Guardian Phone shouldn't not be empty";
@@ -219,10 +228,11 @@ class _AddChurchKidState extends State<AddChurchKid> {
                     onChanged: (val){
                       setState(() {
                         // print(val);
-                        this._sex=val;
+                        _sex=val;
                       });
                     },
-                    value: _sex,
+                    value: _sex??widget.kid.sex,
+                    hint: Text("Gender"),
                   ),
                 ),
               ),
@@ -234,7 +244,7 @@ class _AddChurchKidState extends State<AddChurchKid> {
                 backgroundColor: Colors.orange,
                 icon: Icon(Icons.cake),
                 label: Text(
-                  (_bornDay==null)?("Birthday"):(_bornDay.day.toString()+"/"+_bornDay.month.toString()+"/"+_bornDay.year.toString()),
+                  (_bornDay==null)?(widget.kid.bornDay.toDate().toString().substring(0,11)):(_bornDay.day.toString()+"/"+_bornDay.month.toString()+"/"+_bornDay.year.toString()),
                   style: TextStyle(
                       color:Colors.white,
                       fontFamily: "OpenSans",
@@ -243,7 +253,7 @@ class _AddChurchKidState extends State<AddChurchKid> {
                 onPressed: (){
                   showDatePicker(
                     context: context,
-                    initialDate: (_bornDay==null)?DateTime.now():_bornDay, 
+                    initialDate: (_bornDay==null)?widget.kid.bornDay.toDate():_bornDay, 
                     firstDate: DateTime(1950), 
                     lastDate: DateTime.now(),
                     ).then((value) {
@@ -266,6 +276,7 @@ class _AddChurchKidState extends State<AddChurchKid> {
             child: Container(
               width: MediaQuery.of(context).size.width,
               child: TextFormField(
+                initialValue: widget.kid.allergies,
                 onChanged: (value) {
                   setState(() {
                     _allergies=value;
@@ -305,17 +316,13 @@ class _AddChurchKidState extends State<AddChurchKid> {
     return FloatingActionButton.extended(
       onPressed:(){
         setState(() {
-          if(_sex=="Gender"){
-            _error="Gender Shouldn't be empty";
-          }else if(_bornDay==null){
-            _error="Birthday Shouldn't be empty";
-          }else{
             _error="nope";
             if(_formKey.currentState.validate()){
               _formKey.currentState.save();
               try{
                 _loading=true;
                 doIt();
+                Navigator.pop(context);
                 Navigator.pop(context);
                 print("Done");
               }catch(e){
@@ -324,7 +331,6 @@ class _AddChurchKidState extends State<AddChurchKid> {
                 _error=e.code;
               }
             }
-          }
         });
       } , 
       heroTag: "addButton",
@@ -341,19 +347,19 @@ class _AddChurchKidState extends State<AddChurchKid> {
       
       );
   }
-  Future doIt() async{
-    Firestore.instance.collection("kids-Church").document()
-    .setData(
+  doIt() async{
+    await Firestore.instance.collection("kids-Church").document(widget.docId)
+    .updateData(
       {
-        "firstName":_firstName,
-        "lastName":_lastName,
-        "gName":_gName,
-        "gPhone":_gPhone, 
-        "sex":(_sex=="gender")?("Did not provide"):(_sex),
-        "allergies":_allergies,
-        "bornDay":_bornDay,
-        "isLog":false,
-        "fullName":_firstName+" "+_lastName,
+        "firstName":_firstName??widget.kid.firstName.toString(),
+        "lastName":_lastName??widget.kid.lastName.toString(),
+        "gName":_gName??widget.kid.gName.toString(),
+        "gPhone":_gPhone??widget.kid.gPhone.toString(), 
+        "sex":_sex??widget.kid.sex.toString(),
+        "allergies":_allergies??widget.kid.allergies.toString(),
+        "bornDay":_bornDay??widget.kid.bornDay.toDate(),
+        "isLog":widget.kid.isLog??false,
+        "fullName":(_firstName??widget.kid.firstName).toString()+" "+(_lastName??widget.kid.lastName).toString(),
       }
     );
   }
@@ -399,7 +405,7 @@ class _AddChurchKidState extends State<AddChurchKid> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                        'Add a new profile',
+                        'Edit this profile',
                         style: TextStyle(
                           color: Colors.white,
                           fontFamily: 'one',

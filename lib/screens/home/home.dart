@@ -1,6 +1,8 @@
 import 'package:bottom_navy_bar/bottom_navy_bar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:five/modules/kid.dart';
 import 'package:five/screens/addKid/churchKid.dart';
+import 'package:five/screens/home/profile.dart';
 import 'package:five/service/auth.dart';
 import 'package:flutter/material.dart';
 class Home extends StatefulWidget {
@@ -138,14 +140,40 @@ class _HomeState extends State<Home> {
   
   Widget last(){
 
-    return Container(
-      child: Center(
-        child: Text("Admin",
-        style: TextStyle(
-          fontSize: 25,
-          fontFamily: "OpenSans"
-          ),
-      )),
+    return Scaffold(
+      backgroundColor: Colors.blue[50],
+      body: SingleChildScrollView(
+        physics: AlwaysScrollableScrollPhysics(),
+        child: StreamBuilder<QuerySnapshot>(
+          stream:Firestore.instance.collection("kids-Church").snapshots(),
+          builder: (context,snapshot){
+            if(snapshot.data == null) return Center(child: CircularProgressIndicator());
+            return Column(
+                      children: snapshot.data.documents.map((doc) {
+                        return Visibility(
+                          visible: doc.data['fullName']!=null,
+                          child: Column(
+                            children: <Widget>[
+                              ListTile(
+                                title: Text(doc.data['fullName'] ?? 'nil'),
+                                trailing: RaisedButton(
+                                  child: Text("View"),
+                                  color: Colors.blue,
+                                  onPressed: ()async{
+                                    var userData=await Firestore.instance.collection("kids-Church").document(doc.documentID).get();
+                                    Navigator.push(context,MaterialPageRoute(builder: (context)=>Profile(kid:ChurchKid.fromData(userData.data),docId:doc.documentID,)));
+                                  },
+                                ),
+                              ),
+                              Divider(thickness: 1,color: Colors.black,),
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                    );
+          },
+        ),
+      ),
     );
   }
   
@@ -205,11 +233,11 @@ class _HomeState extends State<Home> {
               icon: (_currentIndex!=0)?Icon(Icons.people_outline):Icon(Icons.people)
             ),
             BottomNavyBarItem(
-              title: Text('User\'s'),
+              title: Text('Home'),
               icon: Icon(Icons.home)
             ),
             BottomNavyBarItem(
-              title: Text('Admin'),
+              title: Text('User\'s'),
               icon: (_currentIndex!=2)?Icon(Icons.person_outline):Icon(Icons.person)
             ),
           ],
