@@ -338,7 +338,7 @@ class _EditThatState extends State<EditThat> {
       label: Padding(
         padding: const EdgeInsets.fromLTRB(100, 5, 100, 5),//symmetric(vertical:0,horizontal:100),
         child: Text(
-          "ADD ;)",
+          "SAVE ;)",
           style: TextStyle(
             fontFamily:"OpenSans",
           ),
