@@ -184,7 +184,7 @@ class _HomeState extends State<Home> {
         child: Scaffold(        
           backgroundColor: Colors.blue[50],
           appBar: AppBar(
-            title: Text('Administration',
+            title: Text('WestPoint Kids Sign In',
             style: TextStyle(
                 color: Colors.white,
                 fontFamily: 'Bellota',
