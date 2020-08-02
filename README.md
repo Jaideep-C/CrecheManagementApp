@@ -1,6 +1,6 @@
-# WestPoint City Church
+# Creche Management App
 
-A new Flutter project for a Australian company.
+A new Flutter project for a Australian company. Where this Application provides a platform where the kids at the creche can add their profiles to a online NoSQL database.
 
 ## Getting Started
 For help getting started with Flutter, view our
